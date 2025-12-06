@@ -16,8 +16,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
+    // console.log({ exception: exception.getResponse() });
+
     const errorResponse: ApiErrorResponse = {
-      timestamp: new Date().toISOString(),
       success: false,
       statusCode: status,
       path: request.url,
@@ -40,7 +41,6 @@ export class PrismaExceptionFilter implements ExceptionFilter {
     const req = ctx.getRequest<Request>();
 
     const defaultError: ApiErrorResponse = {
-      timestamp: new Date().toISOString(),
       success: false,
       statusCode: HttpStatus.BAD_REQUEST,
       path: req.url,
@@ -113,7 +113,6 @@ export class UncaughtExceptionFilter implements ExceptionFilter {
       exception instanceof Error ? exception.message : 'Internal server error';
 
     const errorResponse: ApiErrorResponse = {
-      timestamp: new Date().toISOString(),
       success: false,
       statusCode: status,
       path: req.url,

@@ -14,6 +14,7 @@ import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
 import { IsPublic } from 'src/auth/decorators/public.decorator';
 import { RolesCanAccess } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'generated/prisma/client';
+import type { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 @IsPublic(false)
 @Controller('reservation')
 export class ReservationController {
@@ -26,17 +27,27 @@ export class ReservationController {
   ) {
     return this.reservationService.create(createReservationDto, userId);
   }
-  @RolesCanAccess([Role.ADMIN])
+
+  @RolesCanAccess([Role.ADMIN, Role.OWNER])
   @Get()
-  findAll() {
-    return this.reservationService.findAll();
+  findAll(
+    @ActiveUser('id') userId: number,
+    @ActiveUser('role') userRole: Role,
+  ) {
+    return this.reservationService.findAll(userId, userRole);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reservationService.findOne(+id);
+  findOne(@Param('id') id: string, @ActiveUser() user: ActiveUserData) {
+    return this.reservationService.findOne(+id, user.id, user.role);
   }
-  @RolesCanAccess([Role.ADMIN, Role.OWNER])
+
+  @Patch('cancel/:id')
+  cancelReservation(@Param('id') id: string) {
+    this.reservationService.update(+id, { status: 'CANCELLED' });
+    return this.remove(id, { id: 1, role: Role.ADMIN, email: 'string' });
+  }
+  @RolesCanAccess([Role.ADMIN])
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -46,7 +57,7 @@ export class ReservationController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reservationService.remove(+id);
+  remove(@Param('id') id: string, @ActiveUser() user: ActiveUserData) {
+    return this.reservationService.remove(+id, user.id, user.role);
   }
 }

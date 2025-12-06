@@ -28,7 +28,6 @@ type ApiSuccessResponse<T> = {
 export type ApiErrorResponse = {
   success: false;
   message: string;
-  timestamp: string;
   statusCode: HttpStatus;
   path: string;
   fields?: { field: string; message: string }[];

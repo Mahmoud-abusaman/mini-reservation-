@@ -8,6 +8,11 @@ import { PropertyModule } from './property/property.module';
 import { ReservationModule } from './reservation/reservation.module';
 import { AuthGuard } from './auth/guards/auth.guard';
 import { RolesGuard } from './auth/guards/roles.guard';
+import { ResponseInterceptor } from './interceptors/response.interceptor';
+import {
+  HttpExceptionFilter,
+  PrismaExceptionFilter,
+} from './exceptions/exception';
 
 @Module({
   imports: [
@@ -36,6 +41,9 @@ import { RolesGuard } from './auth/guards/roles.guard';
   providers: [
     { provide: 'APP_GUARD', useClass: AuthGuard },
     { provide: 'APP_GUARD', useClass: RolesGuard },
+    { provide: 'APP_INTERCEPTOR', useClass: ResponseInterceptor },
+    { provide: 'APP_FILTER', useClass: HttpExceptionFilter },
+    { provide: 'APP_FILTER', useClass: PrismaExceptionFilter },
   ],
 })
 export class AppModule {}
