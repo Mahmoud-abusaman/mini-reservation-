@@ -16,7 +16,6 @@ import { RolesCanAccess } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'generated/prisma/enums';
 import { IsPublic } from 'src/auth/decorators/public.decorator';
 import type { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
-import { log } from 'console';
 import { QueryPropertyDto } from './dto/query.dto';
 @IsPublic(false)
 @Controller('property')

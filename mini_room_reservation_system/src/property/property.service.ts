@@ -25,10 +25,12 @@ export class PropertyService {
     return this.prismaService.property.findMany(prismaQuery);
   }
 
-  findOne(id: number) {
-    return this.prismaService.property.findUnique({
+  async findOne(id: number) {
+    const room = await this.prismaService.property.findUnique({
       where: { id },
     });
+    if (!room) throw new NotFoundException('room not found');
+    return room;
   }
 
   async update(

@@ -8,7 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateMeDto, UpdateUserDto } from './dto/update-user.dto';
 import { IsPublic } from 'src/auth/decorators/public.decorator';
 import { RolesCanAccess } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'generated/prisma/enums';
@@ -34,19 +34,17 @@ export class UsersController {
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
   }
-
+  @Patch('me')
+  updateMe(
+    @Body() updateUserDto: UpdateMeDto,
+    @ActiveUser('id') userId: number,
+  ) {
+    return this.usersService.update(userId, updateUserDto);
+  }
   @RolesCanAccess([Role.ADMIN])
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
-  }
-
-  @Patch('me')
-  updateMe(
-    @Body() updateUserDto: UpdateUserDto,
-    @ActiveUser('id') userId: number,
-  ) {
-    return this.usersService.update(userId, updateUserDto);
   }
 
   @Delete('me')

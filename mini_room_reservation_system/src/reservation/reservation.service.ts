@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -11,7 +12,18 @@ import { Role } from 'generated/prisma/enums';
 @Injectable()
 export class ReservationService {
   constructor(private readonly prismaService: PrismaService) {}
-  create(createReservationDto: CreateReservationDto, reserverId: number) {
+  async create(createReservationDto: CreateReservationDto, reserverId: number) {
+    const { roomId, checkIn, checkOut } = createReservationDto;
+    const room = await this.prismaService.property.findUnique({
+      where: { id: roomId },
+    });
+    if (!room) throw new NotFoundException('this room is not available');
+
+    if (await this.hasOverlap(roomId, checkIn, checkOut)) {
+      throw new BadRequestException(
+        'This room is already booked for the selected dates.',
+      );
+    }
     return this.prismaService.reservation.create({
       data: {
         ...createReservationDto,
@@ -69,5 +81,14 @@ export class ReservationService {
     return this.prismaService.reservation.delete({
       where: { id },
     });
+  }
+  async hasOverlap(roomId: number, startDate: Date, endDate: Date) {
+    return !!(await this.prismaService.reservation.findFirst({
+      where: {
+        roomId,
+        checkIn: { lte: endDate },
+        checkOut: { gte: startDate },
+      },
+    }));
   }
 }

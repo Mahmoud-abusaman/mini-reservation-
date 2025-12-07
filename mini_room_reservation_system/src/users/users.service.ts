@@ -12,11 +12,14 @@ export class UsersService {
   }
 
   findAll() {
-    return this.prismaService.user.findMany();
+    return this.prismaService.user.findMany({ omit: { password: true } });
   }
 
   findOne(id: number) {
-    return this.prismaService.user.findUnique({ where: { id } });
+    return this.prismaService.user.findUnique({
+      where: { id },
+      omit: { password: true },
+    });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

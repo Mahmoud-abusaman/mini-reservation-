@@ -42,8 +42,8 @@ import {
     { provide: 'APP_GUARD', useClass: AuthGuard },
     { provide: 'APP_GUARD', useClass: RolesGuard },
     { provide: 'APP_INTERCEPTOR', useClass: ResponseInterceptor },
-    { provide: 'APP_FILTER', useClass: HttpExceptionFilter },
-    { provide: 'APP_FILTER', useClass: PrismaExceptionFilter },
+    // { provide: 'APP_FILTER', useClass: HttpExceptionFilter },
+    // { provide: 'APP_FILTER', useClass: PrismaExceptionFilter },
   ],
 })
 export class AppModule {}

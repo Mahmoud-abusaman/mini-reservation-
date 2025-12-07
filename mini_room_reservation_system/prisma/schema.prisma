@@ -74,7 +74,7 @@ model Property {
   status      RoomStatus
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
-  owner       User          @relation(fields: [ownerId], references: [id])
+  owner       User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   bookings    Reservation[]
 
   @@map("properties")
@@ -92,8 +92,8 @@ model Reservation {
   updatedAt  DateTime      @updatedAt @map("updated_at")
 
   // Relations
-  room  Property @relation(fields: [roomId], references: [id])
-  guest User     @relation(fields: [reserverId], references: [id])
+  room  Property @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  guest User     @relation(fields: [reserverId], references: [id], onDelete: Cascade)
 
   @@map("reservations")
 }
